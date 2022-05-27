@@ -5,6 +5,7 @@ import numpy as np
 from opfunu.cec_basic.cec2014 import *
 from opfunu.type_based.uni_modal import Functions
 import csv
+import time
 
 
 def multiplePasses(function,
@@ -29,16 +30,18 @@ def multiplePasses(function,
     for i in range(repetitions):
         bfo = OriginalBFO(dict, epoch, pop_size)
         abc = BaseABC(dict, epoch, pop_size)
+        bfo_time_start = time.time()
         best_position_bfo, best_fitness_bfo = bfo.solve()
-        time_bfo = sum(bfo.history.list_epoch_time)
-        bfo_row = ["bfo", best_position_bfo[0], best_position_bfo[1], best_fitness_bfo, int(time_bfo)]
+        bfo_time_end = time.time()
+        bfo_elapsed = bfo_time_end - bfo_time_start
+        bfo_row = ["bfo", best_position_bfo[0], best_position_bfo[1], best_fitness_bfo, int(bfo_elapsed)]
+        abc_time_start = time.time()
         best_position_abc, best_fitness_abc = abc.solve()
-        time_abc = sum(abc.history.list_epoch_time)
-        abc_row = ["abc", best_position_abc[0], best_position_abc[1], best_fitness_abc, int(time_abc)]
+        abc_time_end = time.time()
+        abc_elapsed = abc_time_end - abc_time_start
+        abc_row = ["abc", best_position_abc[0], best_position_abc[1], best_fitness_abc, int(abc_elapsed)]
         writer.writerow(bfo_row)
         writer.writerow(abc_row)
-        bfo = None
-        abc = None
     f.close()
 
 
@@ -47,17 +50,17 @@ if __name__ == '__main__':
     ## Setting parameters
     epoch = 25
     pop_size = 100
-    objective_fun = functions._rosenbrock__
-    problem_dict = {
-        "fit_func": objective_fun,
-        "lb": -30,
-        "ub": 30,
-        "minmax": "min",
-        "n_dims": 2
+    objective_fun = functions._zakharov__
+    # problem_dict = {
+    #     "fit_func": objective_fun,
+    #     "lb": -5,
+    #     "ub": 10,
+    #     "minmax": "min",
+    #     "n_dims": 2
+    #
+    # }
 
-    }
-
-    multiplePasses(objective_fun, -30, 30, 100, 10, 10)
+    multiplePasses(objective_fun, -5, 10, 25, 50, 5)
     # bfo = OriginalBFO(problem_dict, epoch, pop_size)
     # best_position_bfo, best_fit_bfo = bfo.solve()
     # time_bfo = sum(bfo.history.list_epoch_time)
