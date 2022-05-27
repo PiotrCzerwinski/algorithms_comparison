@@ -22,20 +22,23 @@ def multiplePasses(function,
         "n_dims": 2
 
     }
-    bfo = OriginalBFO(dict, epoch, pop_size)
-    abc = BaseABC(dict, epoch, pop_size)
+
     f = open('bfo_abc.csv', 'w', newline='')
     writer = csv.writer(f)
-    writer.writerow(["algorith", "best position x", "best position y", "best fitness", "time"])
+    writer.writerow(["algorithm", "best position x", "best position y", "best fitness", "time"])
     for i in range(repetitions):
+        bfo = OriginalBFO(dict, epoch, pop_size)
+        abc = BaseABC(dict, epoch, pop_size)
         best_position_bfo, best_fitness_bfo = bfo.solve()
         time_bfo = sum(bfo.history.list_epoch_time)
-        bfo_row = ["bfo", best_position_bfo[0], best_position_bfo[1], best_fitness_bfo, time_bfo]
+        bfo_row = ["bfo", best_position_bfo[0], best_position_bfo[1], best_fitness_bfo, int(time_bfo)]
         best_position_abc, best_fitness_abc = abc.solve()
         time_abc = sum(abc.history.list_epoch_time)
-        abc_row = ["abc", best_position_abc[0], best_position_abc[1], best_fitness_abc, time_abc]
+        abc_row = ["abc", best_position_abc[0], best_position_abc[1], best_fitness_abc, int(time_abc)]
         writer.writerow(bfo_row)
         writer.writerow(abc_row)
+        bfo = None
+        abc = None
     f.close()
 
 
@@ -54,7 +57,7 @@ if __name__ == '__main__':
 
     }
 
-    multiplePasses(objective_fun, -30, 30, 100, 10, 7)
+    multiplePasses(objective_fun, -30, 30, 100, 10, 10)
     # bfo = OriginalBFO(problem_dict, epoch, pop_size)
     # best_position_bfo, best_fit_bfo = bfo.solve()
     # time_bfo = sum(bfo.history.list_epoch_time)
