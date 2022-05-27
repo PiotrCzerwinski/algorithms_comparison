@@ -2,10 +2,8 @@
 from mealpy.swarm_based.BFO import OriginalBFO
 from mealpy.swarm_based.ABC import BaseABC
 import numpy as np
-
-
-def fitness_function(solution):
-    return np.sum(solution ** 2)
+from opfunu.cec_basic.cec2014 import *
+from opfunu.type_based.uni_modal import Functions
 
 
 def multiplePasses(dict,
@@ -35,14 +33,33 @@ def multiplePasses(dict,
 
 
 if __name__ == '__main__':
-    problem_dict1 = {
-        "fit_func": fitness_function,
-        "lb": [-10, -15, -4, -2, -8],
-        "ub": [10, 15, 12, 8, 20],
+    functions = Functions()
+    ## Setting parameters
+    epoch = 50
+    pop_size = 150
+    objective_fun = functions._rosenbrock__
+    problem_dict = {
+        "fit_func": objective_fun,
+        "lb": -30,
+        "ub": 30,
         "minmax": "min",
+        "n_dims": 2
 
     }
-    epoch = 100
-    pop_size = 50
-    multiplePasses(problem_dict1, epoch, pop_size, 3)
+
+    # multiplePasses(problem_dict, epoch, pop_size, 1)
+
+    bfo = OriginalBFO(problem_dict, epoch, pop_size)
+    best_position_bfo, best_fit_bfo = bfo.solve()
+    time_bfo = sum(bfo.history.list_epoch_time)
+    print(f"BFO best position: {best_position_bfo} best fitness: {best_fit_bfo} time: {int(time_bfo)}")
+    abc = OriginalBFO(problem_dict, epoch, pop_size)
+    best_position_abc, best_fit_abc = abc.solve()
+    time_abc = sum(abc.history.list_epoch_time)
+    print(f"ABC best position: {best_position_abc} best fitness: {best_fit_abc} time: {int(time_abc)}")
+    # bfo.history.save_global_objectives_chart()
+    # bfo.history.save_local_objectives_chart()
+    # bfo.history.save_global_best_fitness_chart()
+    # bfo.history.save_local_best_fitness_chart()
+    # bfo.history.save_trajectory_chart()
 
